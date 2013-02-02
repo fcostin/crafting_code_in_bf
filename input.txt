@@ -1,0 +1,6 @@
+fred:true wilma:false
+wilma:true
+fred:false barney:true
+thelma:true
+barney:false
+shaggy:true
