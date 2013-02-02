@@ -1,0 +1,69 @@
+INITIAL DESIGN:
+
+macro-to-bf language has a stack
+left of stack is storage, managed explicitly by programmer (negative stack locations)
+right of stack is for local vars, scratch use, etc, memory locations managed by compiler
+
+picture:
+
+    storage|locals
+
+this makes it hard to traverse storage, as we clobber it with locals
+
+abuse of scheme:
+
+suppose during execution our local storage needs fit inside a block of N bytes
+to the right of the stack
+
+then we could work with a memory layout of form
+
+[M bytes | N bytes][M bytes | N bytes] ... [M bytes | N bytes]
+
+ie we have enough free memory that can be used by the compiler as stack
+sitting conveniently to the right of each block of M byte storage.
+
+Call each of these things a block
+
+BLOCK BLOCK ... BLOCK
+
+Define two kinds of sentinel block: START_BLOCK and END_BLOCK ie
+
+START_BLOCK BLOCK BLOCK ... BLOCK END_BLOCK
+
+Block types
+    START_BLOCK
+    DATA_BLOCK
+    FREE_BLOCK
+    DATA_BLOCK
+
+operations:
+    write the start block
+    write the end block
+    write a data block containing a 16 byte string
+
+    move cursor left
+    move cursor right
+    is block a start block?
+    is block a end block?
+    is block a data block?
+    is block a free block?
+
+    compare data in block to data in left block
+    swap block with left block
+    delete block (turn it into a free block)
+    overwrite left block with current block, freeing current block
+
+
+program:
+
+    input phase
+        write a start block
+        read words for stdin, writing a data block for each one
+        write an end block
+    sorting phase
+        perform bubble-sort passes until fixed point
+    merging phase
+        perform merge-and-pack passes until fixed point
+    output phase
+        write words to stdout
+
